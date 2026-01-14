@@ -1,18 +1,56 @@
-let tarefas = [];
-
-function exibirTexto() {
-    const input = document.getElementById("campoBusca");
-    const tarefaDigitada = input.value.trim();
-    const local = document.getElementById("localDaTarefa");
-
-    if (tarefaDigitada === "") {
-        input.focus();
+// Verificar autenticação
+function checkAuth() {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    const currentUser = sessionStorage.getItem('currentUser');
+    
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+        window.location.href = '../index.html';
         return;
     }
 
-    // Adiciona tarefa ao array
-    tarefas.push({ texto: tarefaDigitada, concluida: false });
+    // Atualiza o nome do usuário no header
+    if (currentUser) {
+        document.getElementById('welcomeUser').innerHTML = `Olá, <strong>${currentUser}</strong>!`;
+    }
+}
 
+// Função de logout
+function logout() {
+    if (confirm('Tem certeza que deseja sair?')) {
+        sessionStorage.clear();
+        window.location.href = '../index.html';
+    }
+}
+
+// Chave para localStorage baseada no usuário
+function getStorageKey() {
+    const currentUser = sessionStorage.getItem('currentUser');
+    return `tarefas_${currentUser}`;
+}
+
+// Carregar tarefas do localStorage
+function carregarTarefas() {
+    const tarefasSalvas = localStorage.getItem(getStorageKey());
+    if (tarefasSalvas) {
+        tarefas = JSON.parse(tarefasSalvas);
+        tarefas.forEach(tarefa => {
+            renderizarTarefa(tarefa);
+        });
+        atualizarStats();
+        verificarEmptyState();
+    }
+}
+
+// Salvar tarefas no localStorage
+function salvarTarefas() {
+    localStorage.setItem(getStorageKey(), JSON.stringify(tarefas));
+}
+
+let tarefas = [];
+
+function renderizarTarefa(tarefa) {
+    const local = document.getElementById("localDaTarefa");
+    
     // linha da tarefa
     const tarefaDiv = document.createElement("div");
     tarefaDiv.classList.add("tarefa-item");
@@ -20,16 +58,21 @@ function exibirTexto() {
     // checkbox
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.checked = tarefa.concluida;
 
     // texto
     const texto = document.createElement("span");
-    texto.textContent = tarefaDigitada;
+    texto.textContent = tarefa.texto;
+    if (tarefa.concluida) {
+        texto.classList.add("riscado");
+    }
 
     checkbox.addEventListener("change", () => {
         texto.classList.toggle("riscado");
         const index = Array.from(local.children).indexOf(tarefaDiv);
         tarefas[index].concluida = checkbox.checked;
         atualizarStats();
+        salvarTarefas();
     });
 
     // botão apagar
@@ -45,6 +88,7 @@ function exibirTexto() {
             tarefaDiv.remove();
             atualizarStats();
             verificarEmptyState();
+            salvarTarefas();
         }, 300);
     });
 
@@ -52,12 +96,29 @@ function exibirTexto() {
     tarefaDiv.appendChild(texto);
     tarefaDiv.appendChild(btnApagar);
     local.appendChild(tarefaDiv);
+}
+
+function exibirTexto() {
+    const input = document.getElementById("campoBusca");
+    const tarefaDigitada = input.value.trim();
+
+    if (tarefaDigitada === "") {
+        input.focus();
+        return;
+    }
+
+    // Adiciona tarefa ao array
+    const novaTarefa = { texto: tarefaDigitada, concluida: false };
+    tarefas.push(novaTarefa);
+    
+    renderizarTarefa(novaTarefa);
 
     input.value = "";
     input.focus();
     
     atualizarStats();
     verificarEmptyState();
+    salvarTarefas();
 }
 
 function handleKeyPress(event) {
@@ -69,9 +130,11 @@ function handleKeyPress(event) {
 function atualizarStats() {
     const total = tarefas.length;
     const concluidas = tarefas.filter(t => t.concluida).length;
+    const pendentes = total - concluidas;
     
     document.getElementById("totalTarefas").textContent = `Total: ${total}`;
     document.getElementById("tarefasConcluidas").textContent = `Concluídas: ${concluidas}`;
+    document.getElementById("tarefasPendentes").textContent = `Pendentes: ${pendentes}`;
 }
 
 function verificarEmptyState() {
@@ -97,5 +160,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Inicializa o estado vazio
+// Inicializa a aplicação
+checkAuth();
+carregarTarefas();
 verificarEmptyState();
