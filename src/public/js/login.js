@@ -77,7 +77,7 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
 
             // Redireciona para a página de tarefas
             setTimeout(() => {
-                window.location.href = 'pages/tasks.html';
+                window.location.href = '/public/pages/tasks.html';
             }, 1000);
         } else {
             btnLogin.classList.remove('loading');

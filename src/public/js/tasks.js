@@ -4,7 +4,7 @@ function checkAuth() {
     const currentUser = sessionStorage.getItem('currentUser');
     
     if (!isLoggedIn || isLoggedIn !== 'true') {
-        window.location.href = '../index.html';
+        window.location.href = '/public/pages/login/login.html';
         return;
     }
 
@@ -18,7 +18,7 @@ function checkAuth() {
 function logout() {
     if (confirm('Tem certeza que deseja sair?')) {
         sessionStorage.clear();
-        window.location.href = '../index.html';
+        window.location.href = '/public/pages/login/login.html';
     }
 }
 

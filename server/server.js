@@ -10,14 +10,14 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // rota principal - serve o index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', '/public/pages/login/login.html'));
 });
 
 // inicia o servidor
 app.listen(PORT, () => {
     const url = `http://localhost:${PORT}`;
     console.log(`🚀 Servidor rodando em ${url}`);
-    console.log(`📂 Abrindo index.html no navegador...`);
+    console.log(`📂 Abrindo login.html no navegador...`);
     
     // Abre o navegador automaticamente
     const command = process.platform === 'win32' 
