@@ -8,12 +8,12 @@ const PORT = process.env.PORT || 3000;
 // Serve arquivos estáticos da pasta raiz do projeto
 app.use(express.static(path.join(__dirname, '..')));
 
-// rota principal - serve o index.html
+// Rota principal - serve o login.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', '/public/pages/login/login.html'));
+    res.sendFile(path.join(__dirname, '..', 'public/pages/login/login.html'));
 });
 
-// inicia o servidor
+// Inicia o servidor
 app.listen(PORT, () => {
     const url = `http://localhost:${PORT}`;
     console.log(`🚀 Servidor rodando em ${url}`);
@@ -28,3 +28,8 @@ app.listen(PORT, () => {
     
     exec(command);
 });
+
+
+//^ npm start           # Iniciar servidor
+//^ npm run reset       # Reset completo (se travar)
+//^ npm run reset:quick # Reset rápido

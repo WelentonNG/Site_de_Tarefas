@@ -1,10 +1,12 @@
 {
   "name": "servidor-node",
   "version": "1.0.0",
-  "main": "server_node/server.js",
+  "main": "server/server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node server_node/server.js"
+    "start": "node server/server.js",
+    "reset": "node server/reset_server.js",
+    "reset:quick": "node server/reset_server.js --quick"
   },
   "repository": {
     "type": "git",
